@@ -1,21 +1,28 @@
 package com.example.topredditor.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.surfaceColorAtElevation
@@ -31,7 +38,51 @@ import androidx.compose.ui.unit.dp
 import com.example.topredditor.R
 import com.example.topredditor.model.Post
 import com.example.topredditor.ui.theme.TopRedditorTheme
+import java.util.UUID
 import java.util.concurrent.TimeUnit
+
+@Composable
+fun TopPostsScreen(modifier: Modifier = Modifier) {
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            Box(
+                modifier =
+                    Modifier
+                        .statusBarsPadding()
+                        .height(64.dp)
+                        .fillMaxWidth(),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = stringResource(R.string.app_name),
+                    style = MaterialTheme.typography.titleLarge,
+                )
+            }
+        },
+    ) { innerPadding ->
+        LazyColumn(
+            modifier = modifier.padding(innerPadding),
+            contentPadding =
+                PaddingValues(
+                    start = 16.dp,
+                    end = 16.dp,
+                    bottom = 16.dp,
+                ),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            items(
+                items =
+                    List(50) {
+                        SAMPLE_POST.copy(id = UUID.randomUUID().toString())
+                    },
+                key = { it.id },
+            ) { post ->
+                PostWidget(post = post)
+            }
+        }
+    }
+}
 
 @Composable
 private fun PostWidget(
@@ -64,7 +115,7 @@ private fun PostWidget(
                 style = labelStyle,
             )
         }
-        Spacer(modifier = Modifier.width(4.dp))
+        Spacer(modifier = Modifier.width(8.dp))
         Column(
             modifier =
                 Modifier
@@ -115,23 +166,25 @@ private fun PostThumbnail(modifier: Modifier = Modifier) {
     }
 }
 
+private val SAMPLE_POST =
+    Post(
+        id = "t3_1epl10n",
+        title =
+            "Restaurant framed a hole someone punched in the men’s bathroom wall " +
+                "n the men’s bathroom wall n the men’s bathroom wall",
+        author = "Hot_Mess_Express",
+        creationTimeSecondsUtc = 1723384846L,
+        thumbnailLink = null,
+        previewLink = null,
+        commentsCount = 2500,
+    )
+
 @Preview
 @Composable
 private fun PostPreview() {
     TopRedditorTheme {
         Surface(modifier = Modifier.width(300.dp)) {
-            PostWidget(
-                post =
-                    Post(
-                        id = "t3_1epl10n",
-                        title = "Restaurant framed a hole someone punched in the men’s bathroom wall someone punched in the ",
-                        author = "Hot_Mess_Express",
-                        creationTimeSecondsUtc = 1723384846L,
-                        thumbnailLink = null,
-                        previewLink = null,
-                        commentsCount = 2500,
-                    ),
-            )
+            PostWidget(post = SAMPLE_POST)
         }
     }
 }
