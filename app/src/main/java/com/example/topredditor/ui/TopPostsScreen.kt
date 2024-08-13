@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -44,6 +45,7 @@ import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
 import com.example.topredditor.R
 import com.example.topredditor.model.Post
+import com.example.topredditor.ui.theme.TopPostsUiState
 import com.example.topredditor.ui.theme.TopRedditorTheme
 import java.util.concurrent.TimeUnit
 
@@ -55,24 +57,24 @@ fun TopPostsScreen(
     val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
     TopPostsScreenStateless(
         modifier = modifier,
-        posts = uiState.posts,
+        uiState = uiState,
     )
 }
 
 @Composable
 private fun TopPostsScreenStateless(
     modifier: Modifier = Modifier,
-    posts: List<Post>,
+    uiState: TopPostsUiState,
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             Box(
                 modifier =
-                Modifier
-                    .statusBarsPadding()
-                    .height(64.dp)
-                    .fillMaxWidth(),
+                    Modifier
+                        .statusBarsPadding()
+                        .height(64.dp)
+                        .fillMaxWidth(),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
@@ -82,21 +84,30 @@ private fun TopPostsScreenStateless(
             }
         },
     ) { innerPadding ->
-        LazyColumn(
-            modifier = modifier.padding(innerPadding),
-            contentPadding =
+        if (uiState.isLoading) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center,
+            ) {
+                CircularProgressIndicator()
+            }
+        } else {
+            LazyColumn(
+                modifier = modifier.padding(innerPadding),
+                contentPadding =
                 PaddingValues(
                     start = 16.dp,
                     end = 16.dp,
                     bottom = 16.dp,
                 ),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            items(
-                items = posts,
-                key = { it.id },
-            ) { post ->
-                PostWidget(post = post)
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                items(
+                    items = uiState.posts,
+                    key = { it.id },
+                ) { post ->
+                    PostWidget(post = post)
+                }
             }
         }
     }
@@ -112,15 +123,15 @@ private fun PostWidget(
 
         Column(
             modifier =
-            Modifier
-                .weight(1F)
-                .aspectRatio(3 / 4F),
+                Modifier
+                    .weight(1F)
+                    .aspectRatio(3 / 4F),
         ) {
             PostThumbnail(
                 modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .weight(1F),
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(1F),
                 imageUrl = post.thumbnailLink,
             )
             Spacer(modifier = Modifier.height(4.dp))
@@ -137,9 +148,9 @@ private fun PostWidget(
         Spacer(modifier = Modifier.width(8.dp))
         Column(
             modifier =
-            Modifier
-                .fillMaxHeight()
-                .weight(2F),
+                Modifier
+                    .fillMaxHeight()
+                    .weight(2F),
         ) {
             Text(
                 text = post.author,
@@ -195,9 +206,10 @@ private fun PostThumbnail(
 @Composable
 private fun NoImageThumbnail(modifier: Modifier = Modifier) {
     Box(
-        modifier = modifier.background(
-            color = MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp),
-        ),
+        modifier =
+            modifier.background(
+                color = MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp),
+            ),
         contentAlignment = Alignment.Center,
     ) {
         Icon(

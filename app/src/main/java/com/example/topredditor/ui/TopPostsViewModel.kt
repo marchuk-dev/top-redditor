@@ -25,6 +25,7 @@ class TopPostsViewModel
                 _uiStateFlow.update {
                     TopPostsUiState(
                         posts = postRepository.getTopPosts(),
+                        isLoading = false,
                     )
                 }
             }
