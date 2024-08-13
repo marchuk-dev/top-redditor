@@ -41,6 +41,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     packaging {
         resources {
@@ -68,6 +69,10 @@ dependencies {
     implementation(libs.com.google.dagger.hilt.android)
     implementation(libs.com.google.dagger.hilt.android.compiler)
     kapt(libs.com.google.dagger.hilt.android.compiler)
+
+    // network
+    implementation(libs.com.squareup.okhttp.logging)
+    implementation(libs.com.squareup.retrofit.core)
 
     // testing
     testImplementation(libs.junit)
