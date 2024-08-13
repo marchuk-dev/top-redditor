@@ -31,7 +31,7 @@ object NetworkApiModule {
                 if (BuildConfig.DEBUG) {
                     this.addNetworkInterceptor(
                         HttpLoggingInterceptor().apply {
-                            level = HttpLoggingInterceptor.Level.BODY
+                            level = HttpLoggingInterceptor.Level.BASIC
                         },
                     )
                 }
