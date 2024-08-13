@@ -12,19 +12,21 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class TopPostsViewModel @Inject constructor(
-    postRepository: PostRepository,
-) : ViewModel() {
-    private val _uiStateFlow = MutableStateFlow(TopPostsUiState())
-    val uiStateFlow = _uiStateFlow.asStateFlow()
+class TopPostsViewModel
+    @Inject
+    constructor(
+        postRepository: PostRepository,
+    ) : ViewModel() {
+        private val _uiStateFlow = MutableStateFlow(TopPostsUiState())
+        val uiStateFlow = _uiStateFlow.asStateFlow()
 
-    init {
-        viewModelScope.launch {
-            _uiStateFlow.update {
-                TopPostsUiState(
-                    posts = postRepository.getTopPosts(),
-                )
+        init {
+            viewModelScope.launch {
+                _uiStateFlow.update {
+                    TopPostsUiState(
+                        posts = postRepository.getTopPosts(),
+                    )
+                }
             }
         }
     }
-}

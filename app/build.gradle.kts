@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.hiltPlugin)
     kotlin("kapt")
+    alias(libs.plugins.kotlinx.serialization)
 }
 
 android {
@@ -77,6 +78,10 @@ dependencies {
     // network
     implementation(libs.com.squareup.okhttp.logging)
     implementation(libs.com.squareup.retrofit.core)
+
+    // serialization
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.com.squareup.retrofit.kotlinx.serialization)
 
     // testing
     testImplementation(libs.junit)
