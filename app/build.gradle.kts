@@ -65,6 +65,10 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
+    // coroutines
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+
     // dependency injection
     implementation(libs.com.google.dagger.hilt.android)
     implementation(libs.com.google.dagger.hilt.android.compiler)
