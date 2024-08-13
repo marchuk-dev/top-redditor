@@ -27,6 +27,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -35,23 +36,39 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.topredditor.R
 import com.example.topredditor.model.Post
 import com.example.topredditor.ui.theme.TopRedditorTheme
-import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 @Composable
-fun TopPostsScreen(modifier: Modifier = Modifier) {
+fun TopPostsScreen(
+    modifier: Modifier = Modifier,
+    viewModel: TopPostsViewModel = viewModel(),
+) {
+    val uiState by viewModel.uiStateFlow.collectAsStateWithLifecycle()
+    TopPostsScreenStateless(
+        modifier = modifier,
+        posts = uiState.posts,
+    )
+}
+
+@Composable
+private fun TopPostsScreenStateless(
+    modifier: Modifier = Modifier,
+    posts: List<Post>,
+) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             Box(
                 modifier =
-                    Modifier
-                        .statusBarsPadding()
-                        .height(64.dp)
-                        .fillMaxWidth(),
+                Modifier
+                    .statusBarsPadding()
+                    .height(64.dp)
+                    .fillMaxWidth(),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
@@ -72,10 +89,7 @@ fun TopPostsScreen(modifier: Modifier = Modifier) {
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             items(
-                items =
-                    List(50) {
-                        SAMPLE_POST.copy(id = UUID.randomUUID().toString())
-                    },
+                items = posts,
                 key = { it.id },
             ) { post ->
                 PostWidget(post = post)
@@ -94,15 +108,15 @@ private fun PostWidget(
 
         Column(
             modifier =
-                Modifier
-                    .weight(1F)
-                    .aspectRatio(3 / 4F),
+            Modifier
+                .weight(1F)
+                .aspectRatio(3 / 4F),
         ) {
             PostThumbnail(
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .weight(1F),
+                Modifier
+                    .fillMaxWidth()
+                    .weight(1F),
             )
             Spacer(modifier = Modifier.height(4.dp))
 
@@ -166,7 +180,7 @@ private fun PostThumbnail(modifier: Modifier = Modifier) {
     }
 }
 
-private val SAMPLE_POST =
+val SAMPLE_POST =
     Post(
         id = "t3_1epl10n",
         title =
