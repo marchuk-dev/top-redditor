@@ -83,6 +83,9 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.com.squareup.retrofit.kotlinx.serialization)
 
+    // coil
+    implementation(libs.io.coil.compose)
+
     // testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
