@@ -24,11 +24,6 @@ class TopPostsViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            _uiStateFlow.collect {
-                println("TopPostsViewModel: uiStateFlow: $it")
-            }
-        }
-        viewModelScope.launch {
             val apiResponse = postRepository.getTopPosts(limit = POSTS_LIMIT)
             val posts: List<Post>
             val after: String
