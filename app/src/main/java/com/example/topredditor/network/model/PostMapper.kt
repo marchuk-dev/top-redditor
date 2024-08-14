@@ -15,6 +15,8 @@ fun PostDto.asExternalModel() = ApiResponse.Success(
         thumbnailLink = post.thumbnailLink,
         previewLink = post.preview?.images?.firstOrNull()?.source?.url,
         commentsCount = post.commentsCount,
+        url = post.url,
+        upsCount = post.upsCount,
     )
     println("PostMapper post: $result, link: ${post.url}, upsCount: ${post.upsCount}")
     result

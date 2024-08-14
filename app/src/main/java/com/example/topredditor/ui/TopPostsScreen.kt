@@ -1,6 +1,7 @@
 package com.example.topredditor.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,6 +37,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -116,7 +118,13 @@ private fun TopPostsScreenStateless(
                 items = uiState.posts,
                 key = { it.id },
             ) { post ->
-                PostWidget(post = post)
+                val uriHandler = LocalUriHandler.current
+                PostWidget(
+                    modifier = Modifier.clickable {
+                        uriHandler.openUri("https://www.reddit.com" + post.url)
+                    },
+                    post = post,
+                )
             }
             if (uiState.isLoading) {
                 item {
@@ -146,11 +154,17 @@ private fun PostWidget(
                     .weight(1F)
                     .aspectRatio(3 / 4F),
         ) {
+            val uriHandler = LocalUriHandler.current
             PostThumbnail(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .weight(1F),
+                        .weight(1F)
+                        .clickable {
+                            post.previewLink?.let {
+                                uriHandler.openUri(it.replace("&amp;", "&"))
+                            }
+                        },
                 imageUrl = post.thumbnailLink,
             )
             Spacer(modifier = Modifier.height(4.dp))
@@ -250,6 +264,8 @@ val SAMPLE_POST =
         thumbnailLink = null,
         previewLink = null,
         commentsCount = 2500,
+        upsCount = 1000,
+        url = "",
     )
 
 @Preview
