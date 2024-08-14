@@ -1,7 +1,6 @@
 package com.example.topredditor.data
 
 import com.example.topredditor.model.ApiResponse
-import com.example.topredditor.model.Post
 import com.example.topredditor.network.RedditApi
 import com.example.topredditor.network.model.asExternalModel
 import javax.inject.Inject
