@@ -1,10 +1,13 @@
 package com.example.topredditor.network.model
 
+import com.example.topredditor.model.ApiResponse
 import com.example.topredditor.model.Post
 
-fun PostDto.asExternalModel(): List<Post> = data.children.map {
-    val post = it.data
-    val result = Post(
+fun PostDto.asExternalModel() = ApiResponse.Success(
+    after = data.after,
+    posts = data.children.map {
+        val post = it.data
+        val result = Post(
         id = post.id,
         author = post.author,
         title = post.title,
@@ -15,4 +18,7 @@ fun PostDto.asExternalModel(): List<Post> = data.children.map {
     )
     println("PostMapper post: $result, link: ${post.url}, upsCount: ${post.upsCount}")
     result
-}
+    }
+)
+
+

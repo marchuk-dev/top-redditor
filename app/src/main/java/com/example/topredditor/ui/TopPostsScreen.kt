@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -28,7 +29,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -58,6 +62,7 @@ fun TopPostsScreen(
     TopPostsScreenStateless(
         modifier = modifier,
         uiState = uiState,
+        loadMore = viewModel::loadMore,
     )
 }
 
@@ -65,6 +70,7 @@ fun TopPostsScreen(
 private fun TopPostsScreenStateless(
     modifier: Modifier = Modifier,
     uiState: TopPostsUiState,
+    loadMore: () -> Unit,
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -84,29 +90,42 @@ private fun TopPostsScreenStateless(
             }
         },
     ) { innerPadding ->
-        if (uiState.isLoading) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center,
-            ) {
-                CircularProgressIndicator()
+        val listState = rememberLazyListState()
+        val buffer = 5
+        val reachedBottom: Boolean by remember {
+            derivedStateOf {
+                val lastVisibleItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()
+                lastVisibleItem?.index != 0 && lastVisibleItem?.index == listState.layoutInfo.totalItemsCount - buffer
             }
-        } else {
-            LazyColumn(
-                modifier = modifier.padding(innerPadding),
-                contentPadding =
-                PaddingValues(
-                    start = 16.dp,
-                    end = 16.dp,
-                    bottom = 16.dp,
-                ),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                items(
-                    items = uiState.posts,
-                    key = { it.id },
-                ) { post ->
-                    PostWidget(post = post)
+        }
+        LaunchedEffect(reachedBottom) {
+            if (reachedBottom) loadMore()
+        }
+        LazyColumn(
+            modifier = modifier.padding(innerPadding),
+            contentPadding =
+            PaddingValues(
+                start = 16.dp,
+                end = 16.dp,
+                bottom = 16.dp,
+            ),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            state = listState,
+        ) {
+            items(
+                items = uiState.posts,
+                key = { it.id },
+            ) { post ->
+                PostWidget(post = post)
+            }
+            if (uiState.isLoading) {
+                item {
+                    Box(
+                        modifier = Modifier.height(100.dp).fillMaxWidth(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        CircularProgressIndicator()
+                    }
                 }
             }
         }

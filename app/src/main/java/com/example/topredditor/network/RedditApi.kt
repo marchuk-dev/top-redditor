@@ -8,6 +8,7 @@ interface RedditApi {
 
     @GET("top.json")
     suspend fun getTopPosts(
-        @Query("limit") limit: Int = 50,
+        @Query("limit") limit: Int,
+        @Query("after") after: String?,
     ): PostDto
 }

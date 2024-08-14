@@ -10,6 +10,7 @@ data class PostDto(
 
 @Serializable
 data class PostData(
+    val after: String,
     val children: List<PostWrapper>
 )
 
